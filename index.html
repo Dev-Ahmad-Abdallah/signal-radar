@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Techy Radar: 13 Signals (Meteor Shower)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Bootstrap 5 CSS via CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQvdQaC5Z6mCqMtGZYc9C+EHknIr9zmC9F3RjlKcPR1hAXszv/"
+    crossorigin="anonymous"
+  />
+  <style>
+    /* ================================================
+       1) GLOBAL RESET & ROOT VARIABLES
+    ================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      font-size: 16px;
+      /* Colors */
+      --bg-start: #1a1a1a;
+      --bg-end: #2c2c2c;
+      --text-color: #f0f0f0;
+
+      /* Gradients for signals */
+      --weak-gradient: linear-gradient(45deg, #a8e063, #56ab2f);
+      --medium-gradient: linear-gradient(45deg, #2193b0, #6dd5ed);
+      --strong-gradient: linear-gradient(45deg, #f7971e, #ff4500);
+
+      /* Legend circles for each category */
+      --legend-weak: #56ab2f;
+      --legend-med: #2193b0;
+      --legend-strong: #f7971e;
+
+      --primary-color: #63b3ed;
+      --button-hover: #4fd1c5;
+      --border-color: #444;
+      /* Font */
+      --font-family: 'Roboto', sans-serif;
+    }
+
+    /* ================================================
+       2) GLOBAL STYLES
+    ================================================ */
+    body {
+      font-family: var(--font-family);
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+    :focus {
+      outline: 2px dashed #fff;
+      outline-offset: 4px;
+    }
+
+    /* ================================================
+       3) HEADER & NAVIGATION
+    ================================================ */
+    header {
+      width: 100%;
+      background: #111;
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .nav-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    .categories {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .category-wrapper {
+      position: relative;
+    }
+    .category-bubble {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .category-bubble:hover {
+      transform: translateY(-2px);
+      background-color: var(--button-hover);
+    }
+    .category-bubble.active {
+      transform: translateY(-2px);
+      background-color: var(--button-hover);
+      border: 2px solid #fff;
+    }
+    .sub-bubble-list {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      background: #222;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+    .category-wrapper:hover .sub-bubble-list {
+      opacity: 1;
+      visibility: visible;
+    }
+    .sub-bubble {
+      display: block;
+      background: transparent;
+      border: none;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sub-bubble:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ================================================
+       4) RADAR CONTAINER & SIGNALS
+    ================================================ */
+    .radar-container {
+      position: relative;
+      width: 90%;
+      max-width: 1200px;
+      margin: 2rem auto;
+      min-height: 600px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* Meteor-Shower Particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.7; /* Increase or decrease for stronger/weaker effect */
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 14px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 0.5rem;
+      transform: rotateZ(-45deg);
+      animation: meteor 2.5s linear infinite;
+    }
+    @keyframes meteor {
+      0% {
+        opacity: 0;
+        transform: translate(-100px, 0) rotateZ(-45deg);
+      }
+      5% {
+        opacity: 1;
+      }
+      95% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(300px,300px) rotateZ(-45deg);
+      }
+    }
+    /* Arcs */
+    .curved-lines {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 550px;
+      z-index: 1;
+    }
+    .curved-lines path {
+      fill: none;
+      stroke: var(--primary-color);
+      stroke-dasharray: 4, 4;
+      stroke-width: 2;
+      opacity: 0.5;
+    }
+
+    /* Signals (using gradient backgrounds) */
+    .signal {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      z-index: 2;
+      transition: transform 0.2s;
+      animation: pulse 2s infinite alternate;
+    }
+    .signal:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 5px rgba(255,255,255,0.3); }
+      50%  { box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+      100% { box-shadow: 0 0 5px rgba(255,255,255,0.3); }
+    }
+
+    .signal.weak {
+      background: var(--weak-gradient);
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .signal.medium {
+      background: var(--medium-gradient);
+      width: 1.625rem;
+      height: 1.625rem;
+    }
+    .signal.strong {
+      background: var(--strong-gradient);
+      width: 2.125rem;
+      height: 2.125rem;
+    }
+
+    /* ================================================
+       5) QUICK VIEW / DETAILED CARD (Modal)
+    ================================================ */
+    .quick-view-card {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 1001;
+      display: none;
+    }
+    .quickview-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: #fff;
+      cursor: pointer;
+    }
+    /* Preview (compact) content */
+    .preview-content { }
+    /* Detailed content hidden by default */
+    .detailed-content { display: none; }
+    /* When expanded, show detailed-content and hide preview-content */
+    .quick-view-card.expanded .detailed-content { display: block; }
+    .quick-view-card.expanded .preview-content { display: none; }
+
+    .quick-view-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .quick-view-header .quick-icon {
+      width: 24px;
+      height: 24px;
+    }
+    .quick-view-card .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .quick-info {
+      margin-bottom: 1rem;
+    }
+    .quick-info-item {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .info-label {
+      font-weight: 500;
+      color: #68d391;
+    }
+    .desc {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    .btn-extended {
+      font-size: 1rem;
+      padding: 0.75rem 1.25rem;
+      background: #68d391;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn-extended:hover {
+      background: var(--button-hover);
+    }
+
+    /* Layout for expanded card top row: metrics + image */
+    .card-top-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 1rem;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: rgba(255,255,255,0.05);
+    }
+    .metrics-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+      min-width: 150px;
+    }
+    .metric-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+    .metric-title {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+      color: #68d391;
+    }
+    .metric-value {
+      font-weight: 600;
+      font-size: 1.05rem;
+      line-height: 1.4;
+    }
+    .card-image-wrapper {
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+    .card-image-wrapper img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+    .card-image-wrapper .image-credit {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    .section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .section-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 0.25rem;
+    }
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #444;
+      border-radius: 4px;
+      background: #333;
+      color: var(--text-color);
+      resize: vertical;
+    }
+
+    /* ================================================
+       6) FOOTER & LEGEND
+    ================================================ */
+    footer {
+      margin-top: auto;
+      background: #111;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .footer-content {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-content h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .legend-circle {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .legend-circle.low { background: var(--legend-weak); }
+    .legend-circle.med { background: var(--legend-med); }
+    .legend-circle.high { background: var(--legend-strong); }
+
+    /* ================================================
+       7) RESPONSIVE (MOBILE)
+    ================================================ */
+    @media (max-width: 768px) {
+      :root { font-size: 14px; }
+      .nav-container { flex-direction: column; }
+      .quick-view-card { max-width: 90%; }
+      .categories { justify-content: center; }
+      /* Stack the metrics and image vertically in expanded card */
+      .card-top-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER WITH NAV -->
+  <header>
+    <div class="nav-container">
+      <div class="logo">Signal.Radar</div>
+      <div class="categories">
+        <!-- ALL -->
+        <div class="category-wrapper">
+          <button class="category-bubble" data-category="All">All</button>
+        </div>
+        <!-- Digital Health -->
+        <div class="category-wrapper">
+          <button class="category-bubble" data-category="Digital Health">Digital Health</button>
+          <div class="sub-bubble-list">
+            <button class="sub-bubble" data-subcategory="Obesity">Obesity</button>
+            <button class="sub-bubble" data-subcategory="Food Env">Food Env</button>
+            <button class="sub-bubble" data-subcategory="Prescribing">Prescribing</button>
+            <button class="sub-bubble" data-subcategory="Isolation">Isolation</button>
+            <button class="sub-bubble" data-subcategory="Alcohol">Alcohol</button>
+            <button class="sub-bubble" data-subcategory="Digital Tools">Digital Tools</button>
+          </div>
+        </div>
+        <!-- Smart Cities -->
+        <div class="category-wrapper">
+          <button class="category-bubble" data-category="Smart Cities">Smart Cities</button>
+          <div class="sub-bubble-list">
+            <button class="sub-bubble" data-subcategory="Mobility">Mobility</button>
+            <button class="sub-bubble" data-subcategory="Pedestrian">Pedestrian</button>
+            <button class="sub-bubble" data-subcategory="Green">Green</button>
+          </div>
+        </div>
+        <!-- Economic Development -->
+        <div class="category-wrapper">
+          <button class="category-bubble" data-category="Economic Development">Econ Dev</button>
+          <div class="sub-bubble-list">
+            <button class="sub-bubble" data-subcategory="Workweek">Workweek</button>
+            <button class="sub-bubble" data-subcategory="Food Waste">Food Waste</button>
+          </div>
+        </div>
+        <!-- Other -->
+        <div class="category-wrapper">
+          <button class="category-bubble" data-category="Other">Other</button>
+          <div class="sub-bubble-list">
+            <button class="sub-bubble" data-subcategory="Tobacco">Tobacco</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- RADAR CONTAINER -->
+  <div class="radar-container">
+    <!-- Meteor Particles -->
+    <div class="particles">
+      <div class="particle" style="top: 5%; left: 10%; animation-delay: 0.2s;"></div>
+      <div class="particle" style="top: 15%; left: 40%; animation-delay: 1s;"></div>
+      <div class="particle" style="top: 25%; left: 70%; animation-delay: 0.5s;"></div>
+      <div class="particle" style="top: 35%; left: 20%; animation-delay: 1.3s;"></div>
+      <div class="particle" style="top: 45%; left: 50%; animation-delay: 2s;"></div>
+      <div class="particle" style="top: 55%; left: 80%; animation-delay: 0.8s;"></div>
+      <div class="particle" style="top: 65%; left: 30%; animation-delay: 1.6s;"></div>
+      <div class="particle" style="top: 75%; left: 60%; animation-delay: 0.9s;"></div>
+      <div class="particle" style="top: 85%; left: 10%; animation-delay: 1.9s;"></div>
+    </div>
+
+    <!-- Arc lines -->
+    <svg class="curved-lines" viewBox="0 0 1000 550" preserveAspectRatio="none">
+      <path d="M 0,50 Q 500,-50 1000,50" />
+      <path d="M 0,275 Q 500,175 1000,275" />
+      <path d="M 0,500 Q 500,400 1000,500" />
+    </svg>
+
+    <!-- ============ WEAK SIGNALS (top ~10-20%) ============ -->
+    <div
+      class="signal weak"
+      style="top: 12%; left: 15%;"
+      data-category="Digital Health"
+      data-subcategory="Prescribing"
+      data-title="Social Prescribing & Community Health Referrals"
+      data-strength="Weak"
+      data-impact="Medium"
+      data-description="In the UK, 900,000 people were referred to non-medical interventions via social prescribing, improving mental and physical well-being."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai offers multidisciplinary lifestyle modification programs, but social prescribing is not yet a formal system."
+      data-image="https://placehold.co/400x250?text=Social+Prescribing"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Pilot a formal social prescribing framework, fund non-medical interventions, and align it with Dubai’s well-being goals."
+    ></div>
+    <div
+      class="signal weak"
+      style="top: 12%; left: 35%;"
+      data-category="Economic Development"
+      data-subcategory="Food Waste"
+      data-title="Reducing Food Waste for Healthy Meals"
+      data-strength="Weak to Moderate"
+      data-impact="Medium"
+      data-description="Copenhagen’s initiative repurposed supermarket surplus into nutritious community meals, reducing food waste."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="UAE Food Bank collects surplus food and redistributes it to those in need."
+      data-image="https://placehold.co/400x250?text=Food+Waste"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Institutionalize food waste-to-meal programs and encourage large businesses to donate surplus food."
+    ></div>
+    <div
+      class="signal weak"
+      style="top: 12%; left: 55%;"
+      data-category="Digital Health"
+      data-subcategory="Alcohol"
+      data-title="Alcohol Harm Reduction Initiatives"
+      data-strength="Weak"
+      data-impact="Medium"
+      data-description="Amsterdam’s nightlife initiatives provide free water and transport, promoting responsible drinking while reducing binge drinking-related harm."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai strictly regulates alcohol sales, enforcing age limits, designated sale areas, and a zero-tolerance drunk driving law."
+      data-image="https://placehold.co/400x250?text=Alcohol+Harm+Reduction"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Maintain strict regulatory framework, mandate responsible service training, and monitor alcohol-related harm patterns."
+    ></div>
+    <div
+      class="signal weak"
+      style="top: 12%; left: 75%;"
+      data-category="Digital Health"
+      data-subcategory="Digital Tools"
+      data-title="Digital Health Tools Prescription"
+      data-strength="Weak"
+      data-impact="Medium"
+      data-description="Germany’s prescription-based health apps help patients manage conditions like obesity, offering remote coaching and behavioral nudges."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai’s Doctor for Every Citizen telehealth service integrates medical records with 24/7 free teleconsultations."
+      data-image="https://placehold.co/400x250?text=Digital+Health+Tools"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Integrate digital tools into public health programs, develop a formulary of vetted health apps, and encourage insurers to cover subscriptions."
+    ></div>
+
+    <!-- ============ MEDIUM SIGNALS (top ~35-45%) ============ -->
+    <div
+      class="signal medium"
+      style="top: 38%; left: 10%;"
+      data-category="Digital Health"
+      data-subcategory="Obesity"
+      data-title="Comprehensive Childhood Obesity Programs"
+      data-strength="Moderate"
+      data-impact="High"
+      data-description="Amsterdam’s childhood obesity program led to a 12% decline in overweight cases by promoting healthy eating, physical activity, and behavior change across schools, homes, and communities."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="UAE has initiated school nutrition policies, banned junk food in canteens, and runs wellness programs to address childhood obesity."
+      data-image="https://placehold.co/400x250?text=Childhood+Obesity"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Subsidize healthier school meals, regulate food sales near schools, and integrate a citywide program with sustained political and financial backing."
+    ></div>
+    <div
+      class="signal medium"
+      style="top: 38%; left: 30%;"
+      data-category="Digital Health"
+      data-subcategory="Food Env"
+      data-title="Healthy Food Environments"
+      data-strength="Moderate"
+      data-impact="High"
+      data-description="London’s junk-food ad ban led to a 7% reduction in unhealthy food purchases, showcasing the power of policy-driven food environment changes."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai implemented a 50% tax on sugary drinks and 100% on energy drinks, along with strict school food regulations."
+      data-image="https://placehold.co/400x250?text=Healthy+Food"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Extend advertising bans to digital platforms, regulate fast food density near schools, and incentivize retailers to sell affordable fresh produce."
+    ></div>
+    <div
+      class="signal medium"
+      style="top: 38%; left: 50%;"
+      data-category="Digital Health"
+      data-subcategory="Isolation"
+      data-title="Combating Social Isolation & Loneliness"
+      data-strength="Moderate"
+      data-impact="High"
+      data-description="Amsterdam’s Music Salon for seniors combats loneliness by encouraging social interaction through dance and music, improving mental health."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai’s Community Development Authority (CDA) provides elderly support programs, senior clubs, and social engagement initiatives."
+      data-image="https://placehold.co/400x250?text=Social+Isolation"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Expand community centers, integrate 'social connectivity' in well-being metrics, and train workers to identify and address isolation."
+    ></div>
+    <div
+      class="signal medium"
+      style="top: 38%; left: 70%;"
+      data-category="Smart Cities"
+      data-subcategory="Green"
+      data-title="Green (Food) Spaces"
+      data-strength="Moderate"
+      data-impact="Medium"
+      data-description="Lisbon’s urban farming program connects communities through allotment gardens, farmers’ markets, and nutrition education."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai promotes urban farming through rooftop gardens, villa gardens, and community food-growing initiatives."
+      data-image="https://placehold.co/400x250?text=Green+Food+Spaces"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Integrate urban agriculture into city planning, streamline hydroponic approvals, and link schools with urban farms."
+    ></div>
+    <div
+      class="signal medium"
+      style="top: 38%; left: 90%;"
+      data-category="Smart Cities"
+      data-subcategory="Pedestrian"
+      data-title="Pedestrian-Friendly Urban Spaces"
+      data-strength="Moderate"
+      data-impact="High"
+      data-description="Lisbon’s transformation of a car-filled square into a pedestrian hub improved social connectivity, community health, and local business."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai doubles leisure spaces under its 2040 Master Plan, adding pedestrian promenades, shaded walkways, and car-free event zones."
+      data-image="https://placehold.co/400x250?text=Pedestrian+Spaces"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Promote 15-minute neighborhoods, address heat mitigation (shaded walkways), and integrate pedestrianization into city planning."
+    ></div>
+
+    <!-- ============ STRONG SIGNALS (bottom ~70-80%) ============ -->
+    <div
+      class="signal strong"
+      style="top: 70%; left: 20%;"
+      data-category="Economic Development"
+      data-subcategory="Workweek"
+      data-title="De-work (Flexible & Shorter Workweeks)"
+      data-strength="Strong"
+      data-impact="Moderate"
+      data-description="The UK’s 4-day workweek trial improved work-life balance, reducing stress by 39% while maintaining productivity."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai adopted a 4.5-day workweek in 2022, enhancing public sector well-being and aligning with global markets."
+      data-image="https://placehold.co/400x250?text=De-work"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Expand right-to-disconnect policies, set work-life balance KPIs, and test compressed workweeks in government offices."
+    ></div>
+    <div
+      class="signal strong"
+      style="top: 70%; left: 40%;"
+      data-category="Other"
+      data-subcategory="Tobacco"
+      data-title="Tobacco Endgame"
+      data-strength="Strong"
+      data-impact="Moderate"
+      data-description="Milan banned outdoor smoking, significantly improving air quality and public health."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="UAE prohibits smoking in public transport, near children, and in enclosed spaces while enforcing 100% excise taxes on tobacco."
+      data-image="https://placehold.co/400x250?text=Tobacco+Endgame"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Expand smoke-free zones, implement school-based tobacco prevention, and drive down tobacco use through intersectoral strategies."
+    ></div>
+    <div
+      class="signal strong"
+      style="top: 70%; left: 60%;"
+      data-category="Smart Cities"
+      data-subcategory="Mobility"
+      data-title="Active Mobility Infrastructure"
+      data-strength="Strong"
+      data-impact="High"
+      data-description="Paris cycling surged 166% after citywide investments, while Amsterdam’s 30 km/h speed limits made streets safer for pedestrians and cyclists."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai aims for 739 km of cycling tracks by 2026, promotes walkability, and integrates active mobility into urban planning."
+      data-image="https://placehold.co/400x250?text=Active+Mobility"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Align transport, health, and urban planning policies, implement car-free days, and enforce pedestrian safety laws."
+    ></div>
+    <div
+      class="signal strong"
+      style="top: 70%; left: 80%;"
+      data-category="Smart Cities"
+      data-subcategory="Green"
+      data-title="Urban Green & Blue Spaces for Wellness"
+      data-strength="Strong"
+      data-impact="Moderate"
+      data-description="In Malmö, a resident’s well-being improved through access to a waterfront park, reinforcing the mental and physical health benefits of green spaces."
+      data-reference="N/A"
+      data-dev=""
+      data-dubai="Dubai prioritizes park expansion, shaded promenades, and walkable leisure areas under the 2040 Master Plan."
+      data-image="https://placehold.co/400x250?text=Green+and+Blue+Spaces"
+      data-imagecredit="Placeholder.com"
+      data-sources="N/A"
+      data-policy="Preserve land for parks, invest in nature-based solutions, and integrate green prescriptions into healthcare."
+    ></div>
+  </div>
+
+  <!-- TOOLTIP -->
+  <div id="tooltip" style="
+    position: fixed;
+    background: rgba(0,0,0,0.7);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    pointer-events: none;
+    display: none;">
+  </div>
+
+  <!-- QUICK VIEW CARD -->
+  <div class="quick-view-card compact" id="quickViewCard">
+    <button class="quickview-close" id="qvCloseBtn" aria-label="Close Card">×</button>
+    <!-- Preview (Compact) -->
+    <div class="preview-content">
+      <div class="quick-view-header">
+        <img class="quick-icon" src="https://placehold.co/24x24?text=H" alt="Health Icon" />
+        <div class="title" id="qvTitle">QuickView Title</div>
+      </div>
+      <div class="quick-info">
+        <div class="quick-info-item">
+          <span class="info-label">Strength:</span>
+          <span class="info-value" id="qvStrength">N/A</span>
+        </div>
+        <div class="quick-info-item">
+          <span class="info-label">Impact:</span>
+          <span class="info-value" id="qvImpact">N/A</span>
+        </div>
+      </div>
+      <div class="desc" id="qvDesc">Short description here</div>
+      <div class="cta">
+        <button class="btn-extended" id="expandBtn">Read More</button>
+      </div>
+    </div>
+    <!-- Detailed (Expanded) -->
+    <div class="detailed-content">
+      <div class="card-top-row">
+        <div class="metrics-container">
+          <div class="metric-box">
+            <div class="metric-title">Signal Strength</div>
+            <div class="metric-value" id="cardStrength">N/A</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-title">Signal Impact</div>
+            <div class="metric-value" id="cardImpact">N/A</div>
+          </div>
+        </div>
+        <div class="card-image-wrapper">
+          <img src="" alt="Signal Image" id="cardImage" />
+          <span class="image-credit" id="cardImageCredit"></span>
+        </div>
+      </div>
+      <div class="section">
+        <h3 class="section-header">Description</h3>
+        <p id="cardDescription"></p>
+      </div>
+      <div class="section">
+        <h3 class="section-header">Reference / Story</h3>
+        <p id="cardReference"></p>
+      </div>
+      <div class="section" id="devSection">
+        <h3 class="section-header">Signal Development (12 months)</h3>
+        <p id="cardDevelopment"></p>
+      </div>
+      <div class="section">
+        <h3 class="section-header">Dubai Context</h3>
+        <p id="cardDubai"></p>
+      </div>
+      <div class="section">
+        <h3 class="section-header">Systems & Policy Implication</h3>
+        <div id="cardPolicyWrapper" style="
+          max-height: 100px;
+          overflow: auto;
+          border: 1px solid rgba(255,255,255,0.2);
+          padding: 0.5rem;
+          border-radius: 4px;">
+          <ul id="cardPolicy"></ul>
+        </div>
+      </div>
+      <div class="section">
+        <h3 class="section-header">Sources</h3>
+        <p id="cardSources"></p>
+      </div>
+      <div class="section feedback">
+        <h3 class="section-header">User Feedback</h3>
+        <textarea id="userFeedback" placeholder="Leave your feedback here..." rows="3"></textarea>
+        <button class="btn-extended" id="submitFeedback">Submit Feedback</button>
+      </div>
+      <div class="cta">
+        <button class="btn-extended" id="collapseBtn">Collapse</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER & LEGEND -->
+  <footer>
+    <div class="footer-content">
+      <h1>Signal.Radar</h1>
+      <div class="legend">
+        <span><div class="legend-circle low"></div>Low</span>
+        <span><div class="legend-circle med"></div>Med</span>
+        <span><div class="legend-circle high"></div>High</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-7QmEpZ0U1iNZ1kKPtdvervSVK9Bj2V4GrPuLHS3f07Hq5kBuTyrNEIzzyoZd8qBW"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    /******************************************************
+     * TOOLTIP
+     ******************************************************/
+    const tooltip = document.getElementById('tooltip');
+    const signals = document.querySelectorAll('.signal');
+
+    signals.forEach(signal => {
+      signal.addEventListener('mouseover', (e) => {
+        const title = signal.dataset.title || '';
+        tooltip.textContent = title;
+        tooltip.style.display = 'block';
+        tooltip.style.left = e.pageX + 10 + 'px';
+        tooltip.style.top = e.pageY - 10 + 'px';
+      });
+      signal.addEventListener('mouseout', () => {
+        tooltip.style.display = 'none';
+      });
+      // On click => open Quick View
+      signal.addEventListener('click', () => {
+        populateQuickView(signal.dataset);
+        document.getElementById('quickViewCard').style.display = 'block';
+        document.getElementById('quickViewCard').classList.remove('expanded');
+      });
+    });
+
+    /******************************************************
+     * QUICK VIEW CARD (Expand/Collapse)
+     ******************************************************/
+    const quickViewCard = document.getElementById('quickViewCard');
+    const qvCloseBtn = document.getElementById('qvCloseBtn');
+    const expandBtn = document.getElementById('expandBtn');
+    const collapseBtn = document.getElementById('collapseBtn');
+
+    qvCloseBtn.addEventListener('click', () => {
+      quickViewCard.style.display = 'none';
+    });
+    expandBtn.addEventListener('click', () => {
+      quickViewCard.classList.add('expanded');
+    });
+    collapseBtn.addEventListener('click', () => {
+      quickViewCard.classList.remove('expanded');
+    });
+
+    function populateQuickView(data) {
+      // Compact fields
+      document.getElementById('qvTitle').textContent = data.title || 'QuickView Title';
+      document.getElementById('qvStrength').textContent = data.strength || 'N/A';
+      document.getElementById('qvImpact').textContent = data.impact || 'N/A';
+      document.getElementById('qvDesc').textContent = data.description || '';
+
+      // Extended fields
+      document.getElementById('cardStrength').textContent = data.strength || 'N/A';
+      document.getElementById('cardImpact').textContent = data.impact || 'N/A';
+      document.getElementById('cardImage').src = data.image || '';
+      document.getElementById('cardImageCredit').textContent = data.imagecredit || '';
+      document.getElementById('cardDescription').textContent = data.description || '';
+      document.getElementById('cardReference').textContent = data.reference || '';
+      document.getElementById('cardDevelopment').textContent = data.dev || '';
+      document.getElementById('cardDubai').textContent = data.dubai || '';
+      document.getElementById('cardSources').textContent = data.sources || '';
+
+      // Policy list
+      const policyUl = document.getElementById('cardPolicy');
+      policyUl.innerHTML = '';
+      if (data.policy) {
+        data.policy.split('\n').forEach(line => {
+          const trimmed = line.trim();
+          if (trimmed) {
+            const li = document.createElement('li');
+            li.textContent = trimmed;
+            policyUl.appendChild(li);
+          }
+        });
+      }
+    }
+
+    /******************************************************
+     * CATEGORY / SUBCATEGORY FILTERS
+     ******************************************************/
+    const categoryBubbles = document.querySelectorAll('.category-bubble');
+    const subBubbles = document.querySelectorAll('.sub-bubble');
+
+    // Show all signals
+    function showAllSignals() {
+      signals.forEach(sig => {
+        sig.style.opacity = '1';
+        sig.style.pointerEvents = 'auto';
+      });
+      categoryBubbles.forEach(b => b.classList.remove('active'));
+    }
+
+    // Category filter
+    categoryBubbles.forEach(bubble => {
+      bubble.addEventListener('click', () => {
+        const filter = bubble.dataset.category;
+        // set active
+        categoryBubbles.forEach(b => b.classList.remove('active'));
+        bubble.classList.add('active');
+
+        if (filter === "All") {
+          showAllSignals();
+          return;
+        }
+        signals.forEach(sig => {
+          if (sig.dataset.category === filter) {
+            sig.style.opacity = '1';
+            sig.style.pointerEvents = 'auto';
+          } else {
+            sig.style.opacity = '0.2';
+            sig.style.pointerEvents = 'none';
+          }
+        });
+      });
+    });
+
+    // Subcategory filter
+    subBubbles.forEach(sub => {
+      sub.addEventListener('click', e => {
+        e.stopPropagation();
+        const filterSub = sub.dataset.subcategory;
+        signals.forEach(sig => {
+          if (sig.dataset.subcategory === filterSub) {
+            sig.style.opacity = '1';
+            sig.style.pointerEvents = 'auto';
+          } else {
+            sig.style.opacity = '0.2';
+            sig.style.pointerEvents = 'none';
+          }
+        });
+      });
+    });
+
+    /******************************************************
+     * USER FEEDBACK SUBMISSION
+     ******************************************************/
+    const submitFeedbackBtn = document.getElementById('submitFeedback');
+    submitFeedbackBtn.addEventListener('click', () => {
+      const feedback = document.getElementById('userFeedback').value;
+      if (feedback.trim()) {
+        alert("Thank you for your feedback!");
+        document.getElementById('userFeedback').value = "";
+      } else {
+        alert("Please enter your feedback before submitting.");
+      }
+    });
+  </script>
+</body>
+</html>
