@@ -27,12 +27,12 @@
     }
     :root {
       font-size: 16px;
-      /* Primary background gradient */
+      /* Background gradient */
       --bg-start: #1a1a1a;
       --bg-end: #2c2c2c;
       --text-color: #f0f0f0;
 
-      /* Single primary color for signals & legend */
+      /* Single color for all signals */
       --primary-color: #63b3ed;
 
       --button-hover: #4fd1c5;
@@ -211,7 +211,7 @@
       font-family: var(--font-family);
     }
 
-    /* Signals – single color, different sizes by data-impact, bigger halo */
+    /* Signals – single color, size by impact, bigger halo */
     .signal {
       position: absolute;
       border-radius: 50%;
@@ -224,17 +224,17 @@
     }
     .signal:hover {
       transform: scale(1.12);
-      box-shadow: 0 0 16px rgba(99,179,237,0.6);
+      box-shadow: 0 0 16px rgba(255,255,255,0.4);
     }
     @keyframes pulse {
       0% {
-        box-shadow: 0 0 4px rgba(99,179,237,0.2);
+        box-shadow: 0 0 4px rgba(255,255,255,0.15);
       }
       50% {
-        box-shadow: 0 0 16px rgba(99,179,237,0.4);
+        box-shadow: 0 0 16px rgba(255,255,255,0.3);
       }
       100% {
-        box-shadow: 0 0 4px rgba(99,179,237,0.2);
+        box-shadow: 0 0 4px rgba(255,255,255,0.15);
       }
     }
 
@@ -319,29 +319,27 @@
       background: var(--button-hover);
     }
 
+    /* The expanded top row: 3 columns on large, stacked on small */
     .card-top-row {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 1rem;
-      align-items: center;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background: rgba(255,255,255,0.05);
+      align-items: flex-start;
     }
     .metrics-container {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 1rem;
-      flex: 1;
-      min-width: 150px;
+      flex: 1 1 auto;
+      min-width: 250px;
     }
     .metric-box {
+      flex: 1 1 calc(50% - 0.5rem);
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 0.5rem;
       padding: 0.75rem 1rem;
+      min-width: 120px;
     }
     .metric-title {
       font-weight: 700;
@@ -355,8 +353,8 @@
       line-height: 1.4;
     }
     .card-image-wrapper {
-      flex: 1;
-      min-width: 150px;
+      flex: 1 1 auto;
+      min-width: 200px;
       text-align: center;
     }
     .card-image-wrapper img {
@@ -367,6 +365,13 @@
     .card-image-wrapper .image-credit {
       font-size: 0.8rem;
       color: #aaa;
+    }
+
+    /* On smaller screens, stack everything vertically */
+    @media (max-width: 768px) {
+      .card-top-row {
+        flex-direction: column;
+      }
     }
 
     .section {
@@ -394,70 +399,108 @@
     }
 
     /* ================================================
-       6) FOOTER & LEGEND
+       6) FOOTER & LOGO
     ================================================ */
     footer {
       margin-top: auto;
       background: #111;
-      text-align: center;
       padding: 2rem 1rem;
     }
     .footer-content {
       width: 90%;
       max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .footer-content h1 {
+    /* Mosaic logo on left, bigger size, preserve ratio */
+    .footer-logo img {
+      max-height: 100px;
+      width: auto;
+      height: auto;
+    }
+    .footer-title {
       font-size: 1.5rem;
-      margin-bottom: 0.5rem;
       font-weight: 700;
       color: var(--primary-color);
     }
-    .legend {
-      display: inline-flex;
-      align-items: center;
-      gap: 1.5rem;
-      font-size: 1rem;
-      margin-top: 0.5rem;
+
+    /* Legend icon & panel inside radar container, near bottom-right */
+    .legend-icon {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      background: transparent;
+      cursor: pointer;
+      text-align: center;
+      line-height: 2rem;
+      font-size: 1.2rem;
+      transition: background 0.3s, color 0.3s;
+      z-index: 9999;
     }
-    .legend span {
+    .legend-icon:hover {
+      background: var(--primary-color);
+      color: #111;
+    }
+    .legend-panel {
+      position: absolute;
+      bottom: 5rem;
+      right: 1rem;
+      background: #222;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      width: 240px;
+      display: none;
+      z-index: 9999;
+    }
+    .legend-panel.show {
+      display: block;
+    }
+    .legend-panel h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    .legend-panel h4 {
+      font-size: 0.95rem;
+      margin: 0.75rem 0 0.25rem;
+      color: #68d391;
+    }
+    .impact-row {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
     }
-    /* Single color, different sizes for Low, Medium, High */
-    .legend-circle {
-      background: var(--primary-color);
+    .impact-ball {
       border-radius: 50%;
+      background: var(--primary-color);
       display: inline-block;
     }
-    .legend-circle.low {
+    /* 0.7rem difference => Low=1.5, Med=2.2, High=2.9 */
+    .impact-ball.low {
       width: 1.5rem;
       height: 1.5rem;
     }
-    .legend-circle.med {
-      width: 2rem;
-      height: 2rem;
+    .impact-ball.med {
+      width: 2.2rem;
+      height: 2.2rem;
     }
-    .legend-circle.high {
-      width: 2.5rem;
-      height: 2.5rem;
+    .impact-ball.high {
+      width: 2.9rem;
+      height: 2.9rem;
     }
-
-    /* ================================================
-       7) RESPONSIVE (MOBILE)
-    ================================================ */
-    @media (max-width: 768px) {
-      :root { font-size: 14px; }
-      .nav-container { flex-direction: column; }
-      .quick-view-card { max-width: 90%; }
-      .categories { justify-content: center; }
-      .card-top-row {
-        flex-direction: column;
-      }
-      .legend {
-        gap: 1rem;
-      }
+    .legend-panel p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
@@ -526,17 +569,18 @@
       <div class="particle" style="top: 85%; left: 10%; animation-delay: 1.9s;"></div>
     </div>
 
-    <!-- Arc lines with labels -->
+    <!-- Arc lines with labels (Weak, Medium, Strong) -->
     <svg class="curved-lines" viewBox="0 0 1000 550" preserveAspectRatio="none">
       <path d="M 0,50 Q 500,-50 1000,50" />
       <text x="20" y="40">Weak</text>
       <path d="M 0,275 Q 500,175 1000,275" />
-      <text x="20" y="260">Moderate</text>
+      <text x="20" y="260">Medium</text>
       <path d="M 0,500 Q 500,400 1000,500" />
       <text x="20" y="510">Strong</text>
     </svg>
 
-    <!-- ========================= WEAK SIGNALS ========================= -->
+    <!-- ============= SIGNALS (13) with 0.7rem difference in size ============= -->
+    <!-- WEAK SIGNALS -->
     <div
       class="signal"
       style="top: 12%; left: 15%;"
@@ -560,7 +604,7 @@
       data-category="Economic Development"
       data-subcategory="Food Waste"
       data-title="Reducing Food Waste for Healthy Meals"
-      data-strength="Weak to Moderate"
+      data-strength="Weak to Medium"
       data-impact="Medium"
       data-description="Copenhagen’s initiative repurposed supermarket surplus into nutritious community meals, reducing food waste."
       data-reference="N/A"
@@ -606,14 +650,14 @@
       data-policy="Integrate digital tools into public health programs, develop a formulary of vetted health apps, and encourage insurers to cover subscriptions."
     ></div>
 
-    <!-- ========================= MEDIUM SIGNALS ========================= -->
+    <!-- MEDIUM SIGNALS -->
     <div
       class="signal"
       style="top: 38%; left: 10%;"
       data-category="Digital Health"
       data-subcategory="Obesity"
       data-title="Comprehensive Childhood Obesity Programs"
-      data-strength="Moderate"
+      data-strength="Medium"
       data-impact="High"
       data-description="Amsterdam’s childhood obesity program led to a 12% decline in overweight cases by promoting healthy eating, physical activity, and behavior change across schools, homes, and communities."
       data-reference="N/A"
@@ -630,7 +674,7 @@
       data-category="Digital Health"
       data-subcategory="Food Env"
       data-title="Healthy Food Environments"
-      data-strength="Moderate"
+      data-strength="Medium"
       data-impact="High"
       data-description="London’s junk-food ad ban led to a 7% reduction in unhealthy food purchases, showcasing the power of policy-driven food environment changes."
       data-reference="N/A"
@@ -647,7 +691,7 @@
       data-category="Digital Health"
       data-subcategory="Isolation"
       data-title="Combating Social Isolation & Loneliness"
-      data-strength="Moderate"
+      data-strength="Medium"
       data-impact="High"
       data-description="Amsterdam’s Music Salon for seniors combats loneliness by encouraging social interaction through dance and music, improving mental health."
       data-reference="N/A"
@@ -664,7 +708,7 @@
       data-category="Smart Cities"
       data-subcategory="Green"
       data-title="Green (Food) Spaces"
-      data-strength="Moderate"
+      data-strength="Medium"
       data-impact="Medium"
       data-description="Lisbon’s urban farming program connects communities through allotment gardens, farmers’ markets, and nutrition education."
       data-reference="N/A"
@@ -681,7 +725,7 @@
       data-category="Smart Cities"
       data-subcategory="Pedestrian"
       data-title="Pedestrian-Friendly Urban Spaces"
-      data-strength="Moderate"
+      data-strength="Medium"
       data-impact="High"
       data-description="Lisbon’s transformation of a car-filled square into a pedestrian hub improved social connectivity, community health, and local business."
       data-reference="N/A"
@@ -693,7 +737,7 @@
       data-policy="Promote 15-minute neighborhoods, address heat mitigation (shaded walkways), and integrate pedestrianization into city planning."
     ></div>
 
-    <!-- ========================= STRONG SIGNALS ========================= -->
+    <!-- STRONG SIGNALS -->
     <div
       class="signal"
       style="top: 70%; left: 20%;"
@@ -701,7 +745,7 @@
       data-subcategory="Workweek"
       data-title="De-work (Flexible & Shorter Workweeks)"
       data-strength="Strong"
-      data-impact="Moderate"
+      data-impact="Medium"
       data-description="The UK’s 4-day workweek trial improved work-life balance, reducing stress by 39% while maintaining productivity."
       data-reference="N/A"
       data-dev=""
@@ -718,7 +762,7 @@
       data-subcategory="Tobacco"
       data-title="Tobacco Endgame"
       data-strength="Strong"
-      data-impact="Moderate"
+      data-impact="Medium"
       data-description="Milan banned outdoor smoking, significantly improving air quality and public health."
       data-reference="N/A"
       data-dev=""
@@ -752,7 +796,7 @@
       data-subcategory="Green"
       data-title="Urban Green & Blue Spaces for Wellness"
       data-strength="Strong"
-      data-impact="Moderate"
+      data-impact="Medium"
       data-description="In Malmö, a resident’s well-being improved through access to a waterfront park, reinforcing the mental and physical health benefits of green spaces."
       data-reference="N/A"
       data-dev=""
@@ -762,6 +806,34 @@
       data-sources="N/A"
       data-policy="Preserve land for parks, invest in nature-based solutions, and integrate green prescriptions into healthcare."
     ></div>
+
+    <!-- LEGEND ICON & PANEL -->
+    <div class="legend-icon" id="legendIcon" title="Show Legend">?</div>
+    <div class="legend-panel" id="legendPanel">
+      <h3>Legend</h3>
+      <p>All signals share one color:
+        <strong style="color:var(--primary-color)">Primary Color</strong>
+      </p>
+      <h4>Based on Impact:</h4>
+      <div class="impact-row">
+        <div class="impact-ball low"></div>
+        <span>Low</span>
+      </div>
+      <div class="impact-row">
+        <div class="impact-ball med"></div>
+        <span>Medium</span>
+      </div>
+      <div class="impact-row">
+        <div class="impact-ball high"></div>
+        <span>High</span>
+      </div>
+      <h4>Signal Strength &amp; Maturity:</h4>
+      <p>
+        Weaker signals near the top arcs,<br>
+        Medium signals in the middle arcs,<br>
+        stronger signals near the bottom arcs.
+      </p>
+    </div>
   </div>
 
   <!-- TOOLTIP -->
@@ -802,6 +874,7 @@
     <!-- Detailed (Expanded) -->
     <div class="detailed-content">
       <div class="card-top-row">
+        <!-- 2 metric boxes + image side by side (on large screens) -->
         <div class="metrics-container">
           <div class="metric-box">
             <div class="metric-title">Signal Strength</div>
@@ -834,7 +907,7 @@
         <p id="cardDubai"></p>
       </div>
       <div class="section">
-        <h3 class="section-header">Systems & Policy Implication</h3>
+        <h3 class="section-header">Systems &amp; Policy Implication</h3>
         <div id="cardPolicyWrapper" style="
           max-height: 100px;
           overflow: auto;
@@ -859,16 +932,18 @@
     </div>
   </div>
 
-  <!-- FOOTER & LEGEND -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-content">
-      <h1>Signal.Radar</h1>
-      <div class="legend">
-        <!-- Single color, different sizes for Low, Medium, High -->
-        <span><div class="legend-circle low"></div>Low</span>
-        <span><div class="legend-circle med"></div>Medium</span>
-        <span><div class="legend-circle high"></div>High</span>
+      <!-- Mosaic Logo on the left -->
+      <div class="footer-logo">
+        <img
+          src="https://mosaiclive.com/wp-content/uploads/42-ml__0017_Vector-Smart-Object.png"
+          alt="Mosaic Logo"
+        />
       </div>
+      <!-- "Signal.Radar" text on the right -->
+      <div class="footer-title">Signal.Radar</div>
     </div>
   </footer>
 
@@ -886,6 +961,7 @@
     const signals = document.querySelectorAll('.signal');
 
     signals.forEach(signal => {
+      // Show tooltip on hover
       signal.addEventListener('mouseover', (e) => {
         const title = signal.dataset.title || '';
         tooltip.textContent = title;
@@ -896,6 +972,7 @@
       signal.addEventListener('mouseout', () => {
         tooltip.style.display = 'none';
       });
+
       // On click => open Quick View
       signal.addEventListener('click', () => {
         populateQuickView(signal.dataset);
@@ -1023,23 +1100,48 @@
 
     /******************************************************
      * SET BALL SIZE BASED ON IMPACT
-     * Low = 1.5rem, Medium = 2.0rem, High = 2.5rem
+     * 0.7rem difference => Low=1.5rem, Med=2.2rem, High=2.9rem
      ******************************************************/
     document.addEventListener('DOMContentLoaded', () => {
       signals.forEach(signal => {
         const impact = (signal.getAttribute('data-impact') || '').toLowerCase();
         let size;
         if (impact === 'high') {
-          size = '2.5rem';
+          size = '2.9rem';
         } else if (impact === 'medium') {
-          size = '2rem';
+          size = '2.2rem';
         } else {
-          // Default to Low
+          // default = Low
           size = '1.5rem';
         }
         signal.style.width = size;
         signal.style.height = size;
       });
+    });
+
+    /******************************************************
+     * LEGEND TOGGLE (hover, click, long press)
+     ******************************************************/
+    const legendIcon = document.getElementById('legendIcon');
+    const legendPanel = document.getElementById('legendPanel');
+
+    // Show on hover
+    legendIcon.addEventListener('mouseover', () => {
+      legendPanel.classList.add('show');
+    });
+    legendIcon.addEventListener('mouseout', () => {
+      legendPanel.classList.remove('show');
+    });
+
+    // Toggle on click
+    legendIcon.addEventListener('click', () => {
+      legendPanel.classList.toggle('show');
+    });
+
+    // Long touch (for mobile)
+    legendIcon.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      legendPanel.classList.toggle('show');
     });
   </script>
 </body>
